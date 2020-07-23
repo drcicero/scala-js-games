@@ -1,15 +1,10 @@
 <h1>Scala-Js Games</h1>
+<p><b><a href="http://drcicero.github.io/scala-js-games/">Play the game here</a>.</b></p>
 <p>
-    This is a collection of games ported from Java to Scala-Js: the
-    <a href="https://github.com/lihaoyi/scala-js-games/blob/master/src/main/scala/example/Asteroids.scala">
-    source</a> for each game is written in Scala, and <a href="http://lampwww.epfl.ch/~doeraene/scala-js/">
-    cross compiled</a> to run in the browser targeting the <a href="https://developer.mozilla.org/en-US/docs/HTML/Canvas">
-    HTML5 Canvas</a>. The original games can be found <a href="https://github.com/lihaoyi/Java-Games/blob/master/GameLibrary/GameLibrary.java">
-    here</a> and targeting Java/Swing. Although this is basically a
-    complete rewrite, the user-facing side of the game should be exactly
-    the same. Try out the <a href="http://lihaoyi.github.io/scala-js-games/">live demo</a>
+        This is a fork of <a href="https://github.com/lihaoyi/scala-js-games">scala-js-games</a> by Li Haoyi.
+        Play the original <a href="http://lihaoyi.github.io/scala-js-games/">here</a>.
+        Modification by <a href="https://github.com/drcicero">drcicero</a>.
 </p>
-
 <p>
     The games are, in order:
 
@@ -22,11 +17,7 @@
     <li><b>Tetris</b>: collect points by clearing rows and don't let the screen fill with blocks.</li>
 </ul>
 
-<p>
-    The controls are generally up-down-left-right and spacebar; they
-    aren't very complex games. Click on a game to start playing and click
-    somewhere else to pause it.
-</p>
+<p>Click to play. Controls: up, down, left, right, spacebar.</p>
 
 <h2>How to build</h2>
 
