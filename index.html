@@ -1,27 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
     <title>Scala-Js Games</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" />
+    <meta charset="utf-8" />
     <link href="styles.css" rel="stylesheet" />
-</head>
-<body>
-<div class="container">
+
+</head><body>
     <h1>Scala-Js Games</h1>
     <p>
-        This is a collection of games ported from Java to Scala-Js: the
-        <a href="https://github.com/lihaoyi/scala-js-games/blob/master/src/main/scala/example/Asteroids.scala">
-            source</a> for each game is written in Scala, and <a href="http://lampwww.epfl.ch/~doeraene/scala-js/">
-        cross compiled</a> to run in the browser targeting the <a href="https://developer.mozilla.org/en-US/docs/HTML/Canvas">
-        HTML5 Canvas</a>. The original games can be found <a href="https://github.com/lihaoyi/Java-Games/blob/master/GameLibrary/GameLibrary.java">
-        here</a> and targeting Java/Swing. Although this is basically a
-        complete rewrite, the user-facing side of the game should be exactly
-        the same.
+        This is a fork of <a href="https://github.com/lihaoyi/scala-js-games">scala-js-games</a> by Li Haoyi.
+        Play the original <a href="http://lihaoyi.github.io/scala-js-games/">here</a>.
+        Modification by <a href="https://github.com/drcicero">drcicero</a>.
     </p>
 
-    <p>
-        The games are, in order:
+    <p>Click to play. Controls: up, down, left, right, spacebar.</p>
+
+    <canvas id="game" width="800" height="600" tabindex="1"></canvas>
+
+    <p>Sound effects generated with <a href="http://github.grumdrig.com/jsfxr/">JSFXR</a>.
+        Font is PixelOperator, which was available under the SIL licence.</p>
 
     <ul>
         <li><b>Asteroids</b>: shoot down the asteroid swarms and avoid getting hit!</li>
@@ -32,23 +27,5 @@
         <li><b>Tetris</b>: collect points by clearing rows and don't let the screen fill with blocks.</li>
     </ul>
 
-    <p>
-        The controls are generally up-down-left-right and spacebar; they
-        aren't very complex games. Click on a game to start playing and click
-        somewhere else to pause it.
-    </p>
-</div>
-<div style="min-width: 1610px">
-    <canvas id="asteroids" width="800" height="600" tabindex="1"></canvas>
-    <canvas id="astrolander" width="800" height="600" tabindex="1"></canvas>
-    <canvas id="snake" width="800" height="600" tabindex="1"></canvas>
-    <canvas id="pong" width="800" height="600" tabindex="1"></canvas>
-    <canvas id="bricks" width="800" height="600" tabindex="1"></canvas>
-    <canvas id="tetris" width="800" height="600" tabindex="1"></canvas>
-</div>
-
-<script type="text/javascript" src="./target/scala-2.10/games-opt.js"></script>
-    <script>ScalaJSExample().main()</script>
-
-</body>
-</html>
+<script src="./target/scala-2.13/games-opt.js"></script>
+</body></html>

@@ -1,32 +1,31 @@
-package example
+package games
 
 import org.scalajs.dom
+import util.{Color, Game, MessageGame, Point, State}
+
 import scala.util.Random
 
-case class Asteroids(bounds: Point, resetGame: () => Unit) extends Game{
-
+case class Asteroids(st: State) extends Game {
   var bullets = Seq.empty[Bullet]
-  val craft = new Craft(bounds / 2, Point(0, 0), 0)
+  val craft = new Craft(st.bounds / 2, Point(0, 0), 0)
   var frameCount = 0
-  var asteroids = Seq.fill(10)(
+  var asteroids: Seq[Asteroid] = Seq.fill(10)(
     new Asteroid(3,
-      if (Random.nextBoolean()) Point(0, Random.nextInt(bounds.y.toInt))
-      else Point(Random.nextInt(bounds.y.toInt), 0),
+      if (Random.nextBoolean()) Point(0, Random.nextInt(st.bounds.y.toInt))
+      else Point(Random.nextInt(st.bounds.y.toInt), 0),
       Point(Random.nextInt(5), Random.nextInt(5)) - Point(2.5, 2.5)
     )
   )
 
-  def update(keys: Set[Int]) = {
+  def update(): List[Game] = {
     frameCount += 1
-
 
     asteroids.foreach(_.move())
     bullets.foreach(_.move())
-    craft.move(keys)
+    craft.move()
 
-
-
-    if (keys(32) && bullets.length < 10 && frameCount % 2 == 0){
+    if (st.keys(32) && bullets.length < 10 && frameCount % 2 == 0) {
+      // util.Sound.pling() // shot
       bullets = bullets :+ new Bullet(
         craft.position,
         craft.momentum + Point(15, 0).rotate(craft.theta)
@@ -38,6 +37,7 @@ case class Asteroids(bounds: Point, resetGame: () => Unit) extends Game{
       a <- asteroids
       if a.contains(b.position)
     } yield {
+      util.Sound.pling() // hit
       val newAsteroids =
         if (a.level == 1) Nil
         else {
@@ -50,21 +50,21 @@ case class Asteroids(bounds: Point, resetGame: () => Unit) extends Game{
     val (removed, added) = changes.unzip
     val flatRemoved = removed.flatten
     asteroids = asteroids.filter(!flatRemoved.contains(_)) ++ added.flatten
-    bullets =
-      bullets
-        .filter(!flatRemoved.contains(_))
-        .filter(_.position.within(Point(0, 0), bounds))
+    bullets = bullets
+      .filter(!flatRemoved.contains(_))
+      .filter(_.position.within(Point(0, 0), st.bounds))
 
-    if(asteroids.exists(_.contains(craft.position))){
-      result = Some("Your ship hit an asteroid!")
-      resetGame()
-    }else if (asteroids.length == 0){
-      result = Some("You successfully destroyed every asteroid!")
-      resetGame()
-    }
+    if (asteroids.exists(_.contains(craft.position))) {
+      util.Sound.pling() // win
+      List(new MessageGame("Your ship hit an asteroid!")(st))
+    } else if (asteroids.isEmpty) {
+      util.Sound.pling() // loose
+      List(new MessageGame("You successfully destroyed every asteroid!")(st))
+    } else
+      List(this)
   }
 
-  def draw(ctx: dom.CanvasRenderingContext2D) = {
+  def draw(ctx: dom.CanvasRenderingContext2D): Unit = {
     ctx.fillStyle = Color.Black
     ctx.fillRect(0, 0, 800, 800)
 
@@ -78,16 +78,16 @@ case class Asteroids(bounds: Point, resetGame: () => Unit) extends Game{
 
 
   class Asteroid(val level: Int, var position: Point, val momentum: Point){
-    def draw(ctx: dom.CanvasRenderingContext2D) = {
+    def draw(ctx: dom.CanvasRenderingContext2D): Unit = {
       val size = 10*level
       ctx.fillRect(position.x - size/2, position.y - size/2, size, size)
     }
-    def move() = {
+    def move(): Unit = {
       position += momentum
-      position += bounds
-      position %= bounds
+      position += st.bounds
+      position %= st.bounds
     }
-    def contains(other: Point) = {
+    def contains(other: Point): Boolean = {
       val min = position - Point(5, 5) * level
       val max = position + Point(5, 5) * level
       other.within(min, max)
@@ -95,7 +95,7 @@ case class Asteroids(bounds: Point, resetGame: () => Unit) extends Game{
   }
 
   class Craft(var position: Point, var momentum: Point, var theta: Double){
-    def draw(ctx: dom.CanvasRenderingContext2D) = {
+    def draw(ctx: dom.CanvasRenderingContext2D): Unit = {
       ctx.beginPath()
       val pts = Seq(
         Point(15, 0).rotate(theta) + position,
@@ -103,30 +103,29 @@ case class Asteroids(bounds: Point, resetGame: () => Unit) extends Game{
         Point(7, 0).rotate(theta - 127.5/180 * Math.PI) + position
       )
       ctx.moveTo(pts.last.x, pts.last.y)
-      pts.map(p => ctx.lineTo(p.x, p.y))
+      pts.foreach(p => ctx.lineTo(p.x, p.y))
       ctx.fill()
     }
-    def move(keys: Set[Int]) = {
+    def move(): Unit = {
       position += momentum
-      position += bounds
-      position %= bounds
+      position += st.bounds
+      position %= st.bounds
 
-      if (keys(37)) theta -= 0.05
-      if (keys(38)) momentum += Point(0.2, 0).rotate(theta)
-      if (keys(39)) theta += 0.05
-      if (keys(40)) momentum -= Point(0.2, 0).rotate(theta)
+      if (st.keys(37)) theta -= 0.05
+      if (st.keys(38)) momentum += Point(0.2, 0).rotate(theta)
+      if (st.keys(39)) theta += 0.05
+      if (st.keys(40)) momentum -= Point(0.2, 0).rotate(theta)
     }
   }
   class Bullet(var position: Point, val momentum: Point){
-    def draw(ctx: dom.CanvasRenderingContext2D) = {
+    def draw(ctx: dom.CanvasRenderingContext2D): Unit = {
       ctx.beginPath()
       ctx.moveTo(position.x, position.y)
       val forward = position + momentum * 5.0 / momentum.length
       ctx.lineTo(forward.x, forward.y)
       ctx.stroke()
     }
-
-    def move() = {
+    def move(): Unit = {
       position += momentum
     }
   }
